@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'advent_app'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=advent_app",
+                    "--package=advent_app"
+                ],
+                "filter": {
+                    "name": "advent_app",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
