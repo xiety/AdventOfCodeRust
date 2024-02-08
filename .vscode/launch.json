@@ -7,16 +7,19 @@
             "name": "Debug example 'advent_app'",
             "cargo": {
                 "args": [
-                    "build",
+                    "test",
+                    "--no-run",
                     "--bin=advent_app",
                     "--package=advent_app"
                 ],
                 "filter": {
                     "name": "advent_app",
                     "kind": "bin"
-                }
+                },
             },
-            "args": [],
+            "args": [
+                "--test-threads=1"
+            ],
             "cwd": "${workspaceFolder}"
         }
     ]
