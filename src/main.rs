@@ -27,10 +27,9 @@ fn find_digit_in_string(string: &str) -> u32 {
 
 fn get_digit<T>(chars: T) -> u32
 where
-    T: IntoIterator<Item = char>,
+    T: Iterator<Item = char>,
 {
     chars
-        .into_iter()
         .filter(|c| c.is_digit(10))
         .next()
         .unwrap()
