@@ -8,7 +8,7 @@ fn main() {
         .map(|x| find_digit_in_string(&x))
         .sum::<u32>();
 
-    println!("{}", result)
+    println!("{result}")
 }
 
 fn read_lines(filename: &str) -> Vec<String> {
