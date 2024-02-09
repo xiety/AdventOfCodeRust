@@ -1,8 +1,8 @@
-use crate::helpers::read_lines;
+use crate::helpers;
 
 #[allow(dead_code)]
 fn run(filename: &str) -> u32 {
-    read_lines(filename)
+    helpers::read_lines(filename)
         .into_iter()
         .map(|x| find_digit_in_string(&x))
         .sum::<u32>()
