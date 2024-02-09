@@ -4,7 +4,6 @@ use crate::helpers;
 use crate::helpers::IteratorExt;
 
 #[allow(dead_code)]
-
 fn run_a(filename: &str) -> u32 {
     helpers::read_lines(filename)
         .into_iter()
@@ -29,6 +28,7 @@ where
         .unwrap()
 }
 
+#[allow(dead_code)]
 fn run_b(filename: &str) -> u32 {
     helpers::read_lines(filename)
         .into_iter()
@@ -59,31 +59,23 @@ fn process_b(line: &str) -> u32 {
         ("9", 9),
     ]);
 
-    let mut min = Option::None;
-    let mut min_result = String::from("");
+    let min_result = dic.iter()
+        .map(|(a, b)| (line.find(a), b))
+        .filter(|(a, _)| a.is_some())
+        .map(|(a, b)| (a.unwrap(), b))
+        .min_by(|x, y| x.0.cmp(&y.0))
+        .unwrap().1;
 
-    let mut max = Option::None;
-    let mut max_result = String::from("");
+    let max_result = dic.iter()
+        .map(|(a, b)| (line.rfind(a), b))
+        .filter(|(a, _)| a.is_some())
+        .map(|(a, b)| (a.unwrap(), b))
+        .max_by(|x, y| x.0.cmp(&y.0))
+        .unwrap().1;
 
-    for (key, value) in &dic {
-
-        let on = line.find(key);
-
-        if min == Option::None || (on.is_some() && on.unwrap() < min.unwrap()) {
-            min = on;
-            min_result = value.to_string();
-        }
-
-        let onl = line.rfind(key);
-
-        if max == Option::None || (onl.is_some() && onl.unwrap() > max.unwrap()) {
-            max = onl;
-            max_result = value.to_string();
-        };
-    }
-
-    let join = format!("{min_result}{max_result}");
-    let result = join.parse().unwrap();
+    let result = format!("{min_result}{max_result}")
+        .parse()
+        .unwrap();
 
     println!("{line} {result}");
 
