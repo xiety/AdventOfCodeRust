@@ -1,4 +1,4 @@
-use std::fs::read_to_string;
+use crate::helpers::read_lines;
 
 #[allow(dead_code)]
 fn run(filename: &str) -> u32 {
@@ -6,14 +6,6 @@ fn run(filename: &str) -> u32 {
         .into_iter()
         .map(|x| find_digit_in_string(&x))
         .sum::<u32>()
-}
-
-fn read_lines(filename: &str) -> Vec<String> {
-    read_to_string(filename)
-        .unwrap()
-        .lines()
-        .map(String::from)
-        .collect()
 }
 
 fn find_digit_in_string(string: &str) -> u32 {
