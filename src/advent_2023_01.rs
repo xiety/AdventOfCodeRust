@@ -28,17 +28,20 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    #![allow(non_snake_case)]
+
+    use super::run;
+    use crate::test_base::get_test_file_name;
 
     #[test]
-    fn test_2023_01_a_sample() {
-        let actual = run(r"..\advent_app_data\2024_01_A_sample.txt");
+    fn test_2023_01_A_sample() {
+        let actual = run(&get_test_file_name(2023, 1, "A", false));
         assert_eq!(actual, 142);
     }
 
     #[test]
-    fn test_2023_01_a_input() {
-        let actual = run(r"..\advent_app_data\2024_01_A_input.txt");
+    fn test_2023_01_A_input() {
+        let actual = run(&get_test_file_name(2023, 1, "A", true));
         assert_eq!(actual, 54644);
     }
 }
