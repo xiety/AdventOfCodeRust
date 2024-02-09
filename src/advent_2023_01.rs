@@ -1,4 +1,5 @@
 use crate::helpers;
+use crate::helpers::IteratorExt;
 
 #[allow(dead_code)]
 fn run(filename: &str) -> u32 {
@@ -20,8 +21,7 @@ where
 {
     chars
         .filter(|c| c.is_digit(10))
-        .next()
-        .unwrap()
+        .first()
         .to_digit(10)
         .unwrap()
 }
