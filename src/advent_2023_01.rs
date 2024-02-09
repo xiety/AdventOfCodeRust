@@ -63,14 +63,14 @@ fn process_b(line: &str) -> u32 {
         .map(|(a, b)| (line.find(a), b))
         .filter(|(a, _)| a.is_some())
         .map(|(a, b)| (a.unwrap(), b))
-        .min_by(|x, y| x.0.cmp(&y.0))
+        .min_by_key(|a| a.0)
         .unwrap().1;
 
     let max_result = dic.iter()
         .map(|(a, b)| (line.rfind(a), b))
         .filter(|(a, _)| a.is_some())
         .map(|(a, b)| (a.unwrap(), b))
-        .max_by(|x, y| x.0.cmp(&y.0))
+        .max_by_key(|a| a.0)
         .unwrap().1;
 
     let result = format!("{min_result}{max_result}")
