@@ -5,6 +5,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug example 'advent_app'",
+            "env": { "RUST_BACKTRACE": "1" },
             "cargo": {
                 "args": [
                     "test",
