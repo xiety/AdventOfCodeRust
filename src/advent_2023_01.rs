@@ -35,7 +35,7 @@ fn run_b(filename: &str) -> u32 {
 
 fn process_b(line: &str) -> u32 {
     let dic = HashMap::from([
-        ("one", 1),
+        ("one", 1u32),
         ("two", 2),
         ("three", 3),
         ("four", 4),
@@ -57,25 +57,23 @@ fn process_b(line: &str) -> u32 {
     ]);
 
     fn filter<'a>(
-        iter: impl Iterator<Item = (Option<usize>, &'a i32)>,
-    ) -> impl Iterator<Item = (usize, &'a i32)> {
+        iter: impl Iterator<Item = (Option<usize>, &'a u32)>,
+    ) -> impl Iterator<Item = (usize, &'a u32)> {
         iter.filter(|(a, _)| a.is_some())
             .map(|(a, b)| (a.unwrap(), b))
     }
 
-    let min_result = filter(dic.iter().map(|(a, b)| (line.find(a), b)))
+    let val1 = filter(dic.iter().map(|(a, b)| (line.find(a), b)))
         .min_by_key(|a| a.0)
         .unwrap()
         .1;
 
-    let max_result = filter(dic.iter().map(|(a, b)| (line.rfind(a), b)))
+    let val2 = filter(dic.iter().map(|(a, b)| (line.rfind(a), b)))
         .max_by_key(|a| a.0)
         .unwrap()
         .1;
 
-    let result = format!("{min_result}{max_result}").parse().unwrap();
-
-    result
+    val1 * 10 + val2
 }
 
 #[cfg(test)]
