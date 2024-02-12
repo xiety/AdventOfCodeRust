@@ -17,8 +17,7 @@ fn process_a(string: &str) -> u32 {
     val1 * 10 + val2
 }
 
-fn get_digit(chars: impl Iterator<Item = char>) -> u32
-{
+fn get_digit(chars: impl Iterator<Item = char>) -> u32 {
     chars
         .filter(|c| c.is_digit(10))
         .first()
@@ -57,20 +56,24 @@ fn process_b(line: &str) -> u32 {
         ("9", 9),
     ]);
 
-    fn filter<'a>(iter: impl Iterator<Item = (Option<usize>, &'a i32)>) -> impl Iterator<Item = (usize, &'a i32)> {
+    fn filter<'a>(
+        iter: impl Iterator<Item = (Option<usize>, &'a i32)>,
+    ) -> impl Iterator<Item = (usize, &'a i32)> {
         iter.filter(|(a, _)| a.is_some())
             .map(|(a, b)| (a.unwrap(), b))
     }
 
     let min_result = filter(dic.iter().map(|(a, b)| (line.find(a), b)))
-        .min_by_key(|a| a.0).unwrap().1;
+        .min_by_key(|a| a.0)
+        .unwrap()
+        .1;
 
     let max_result = filter(dic.iter().map(|(a, b)| (line.rfind(a), b)))
-        .max_by_key(|a| a.0).unwrap().1;
+        .max_by_key(|a| a.0)
+        .unwrap()
+        .1;
 
-    let result = format!("{min_result}{max_result}")
-        .parse()
-        .unwrap();
+    let result = format!("{min_result}{max_result}").parse().unwrap();
 
     result
 }
