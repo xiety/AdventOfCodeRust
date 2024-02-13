@@ -24,6 +24,21 @@ fn run_a(filename: &str) -> u32 {
         .sum()
 }
 
+
+#[allow(dead_code)]
+fn run_b(filename: &str) -> u32 {
+    let items = load(filename);
+
+    items
+        .into_iter()
+        .map(|x| {
+            (0..3)
+                .map(|i| x.balls.iter().map(|x| x[i]).max().unwrap())
+                .product::<u32>()
+        })
+        .sum()
+}
+
 fn parse(line: &str) -> Game {
     let re = Regex::new(r"^Game (?<GameNumber>\d+): (?<GameData>.*)$").unwrap();
 
@@ -62,25 +77,6 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
             balls
         })
         .collect()
-}
-
-#[allow(dead_code)]
-fn run_b(filename: &str) -> u32 {
-    let items = load(filename);
-
-    let mut result = 0;
-
-    for item in items {
-        let mut mul = 1;
-
-        for i in 0..3 {
-            mul *= item.balls.iter().map(|x| x[i]).max().unwrap();
-        }
-
-        result += mul;
-    }
-
-    result
 }
 
 fn load(filename: &str) -> Vec<Game> {
