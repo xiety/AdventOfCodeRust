@@ -11,12 +11,11 @@ fn run_a(filename: &str) -> u32 {
     items
         .into_iter()
         .filter_map(|x| {
-            for toss in x.balls {
-                if (0..3).any(|i| cubes[i] < toss[i]) {
-                    return None;
-                }
+            if x.balls.into_iter().any(|w| (0..3).any(|i| cubes[i] < w[i])) {
+                None
+            } else {
+                Some(x.num)
             }
-            Some(x.num)
         })
         .sum()
 }
