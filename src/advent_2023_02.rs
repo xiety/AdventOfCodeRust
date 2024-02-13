@@ -43,9 +43,7 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
 
     let tosses = line.split("; ");
 
-    let mut list: Vec<[u32; 3]> = Vec::new();
-
-    for toss in tosses {
+    tosses.map(|toss| {
         let mut balls = [0, 0, 0];
 
         let throws = toss.split(", ");
@@ -56,14 +54,16 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
             let num: u32 = caps.get_type("Num");
             let color = caps.get_str("Color");
 
-            let index = colors.iter().position(|&x| x == color).unwrap();
+            let index = index_of(colors, color);
             balls[index] = num;
         }
 
-        list.push(balls)
-    }
+        balls
+    }).collect()
+}
 
-    list
+fn index_of(colors: [&str; 3], color: &str) -> usize {
+    colors.iter().position(|&x| x == color).unwrap()
 }
 
 #[allow(dead_code)]
