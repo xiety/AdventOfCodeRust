@@ -85,25 +85,25 @@ mod test {
     use crate::test_base::get_test_file_name;
 
     #[test]
-    fn test_2023_01_A_sample() {
+    fn A_sample() {
         let actual = run_a(&get_test_file_name(2023, 1, "sampleA"));
         assert_eq!(actual, 142);
     }
 
     #[test]
-    fn test_2023_01_A_input() {
+    fn A_input() {
         let actual = run_a(&get_test_file_name(2023, 1, "input"));
         assert_eq!(actual, 54644);
     }
 
     #[test]
-    fn test_2023_01_B_sample() {
+    fn B_sample() {
         let actual = run_b(&get_test_file_name(2023, 1, "sampleB"));
         assert_eq!(actual, 281);
     }
 
     #[test]
-    fn test_2023_01_B_input() {
+    fn B_input() {
         let actual = run_b(&get_test_file_name(2023, 1, "input"));
         assert_eq!(actual, 53348);
     }

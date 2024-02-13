@@ -24,13 +24,18 @@ where
 
 pub trait CapturesExt<'h> {
     fn get_type<T: FromStr>(&self, name: &str) -> T where <T as FromStr>::Err: Debug;
+    fn get_str(&self, name: &str) -> &str;
 }
 
 impl<'h> CapturesExt<'h> for regex_lite::Captures<'h>
 {
     fn get_type<T: FromStr>(&self, name: &str) -> T where <T as FromStr>::Err: Debug {
-        let v = self.name(name).unwrap().as_str();
+        let v = self.get_str(name);
         let a = v.parse::<T>();
         a.unwrap()
+    }
+
+    fn get_str(&self, name: &str) -> &str {
+        self.name(name).unwrap().as_str()
     }
 }
