@@ -1,6 +1,6 @@
-use crate::helpers::{self, CapturesExt, IteratorExt};
+use crate::helpers::{self, IteratorExt};
 
-use regex_lite::Regex;
+use macros::macro_regex;
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
@@ -35,21 +35,15 @@ fn run_b(filename: &str) -> u32 {
 }
 
 fn parse(line: &str) -> Game {
-    let re = Regex::new(r"^Game (?<GameNumber>\d+): (?<GameData>.*)$").unwrap();
+    let r1: R1 = line.parse().unwrap();
 
-    let caps = re.captures(line).unwrap();
-    let num: u32 = caps.get_type("GameNumber");
-    let game_data = caps.get_str("GameData");
+    let balls = parse_game_data(r1.data.as_str());
 
-    let balls = parse_game_data(game_data);
-
-    Game { num, balls }
+    Game { num: r1.num, balls }
 }
 
 fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
     let colors = ["red", "green", "blue"];
-
-    let re = Regex::new(r"^(?<Num>\d+) (?<Color>\w+)$").unwrap();
 
     let tosses = line.split("; ");
 
@@ -60,13 +54,10 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
             let throws = toss.split(", ");
 
             for throw in throws {
-                let caps = re.captures(throw).unwrap();
+                let r2: R2 = throw.parse().unwrap();
 
-                let num: u32 = caps.get_type("Num");
-                let color = caps.get_str("Color");
-
-                let index = colors.iter().index_of(&color);
-                balls[index] = num;
+                let index = colors.iter().index_of(&r2.color.as_str());
+                balls[index] = r2.num;
             }
 
             balls
@@ -85,6 +76,18 @@ fn load(filename: &str) -> Vec<Game> {
 struct Game {
     num: u32,
     balls: Vec<[u32; 3]>,
+}
+
+#[macro_regex(r"^Game (?<num>\d+): (?<data>.*)$")]
+struct R1 {
+    num: u32,
+    data: String,
+}
+
+#[macro_regex(r"^(?<num>\d+) (?<color>\w+)$")]
+struct R2 {
+    num: u32,
+    color: String,
 }
 
 #[cfg(test)]
