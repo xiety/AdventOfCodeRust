@@ -11,6 +11,7 @@ pub fn read_lines(filename: &str) -> Vec<String> {
 
 pub trait IteratorExt<T> {
     fn first(&mut self) -> T;
+    fn index_of(&mut self, value: T) -> usize where T: std::cmp::PartialEq;
 }
 
 impl<T, I> IteratorExt<T> for I
@@ -19,6 +20,10 @@ where
 {
     fn first(&mut self) -> T {
         self.next().unwrap()
+    }
+
+    fn index_of(&mut self, value: T) -> usize where T: std::cmp::PartialEq {
+        self.position(|x| x == value).unwrap()
     }
 }
 

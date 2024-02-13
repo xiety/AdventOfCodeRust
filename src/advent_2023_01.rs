@@ -78,32 +78,29 @@ fn process_b(line: &str) -> u32 {
 
 #[cfg(test)]
 mod test {
-    #![allow(non_snake_case)]
-
-    use super::run_a;
-    use super::run_b;
+    use super::{run_a, run_b};
     use crate::test_base::get_test_file_name;
 
     #[test]
-    fn A_sample() {
+    fn a_sample() {
         let actual = run_a(&get_test_file_name(2023, 1, "sampleA"));
         assert_eq!(actual, 142);
     }
 
     #[test]
-    fn A_input() {
+    fn a_input() {
         let actual = run_a(&get_test_file_name(2023, 1, "input"));
         assert_eq!(actual, 54644);
     }
 
     #[test]
-    fn B_sample() {
+    fn b_sample() {
         let actual = run_b(&get_test_file_name(2023, 1, "sampleB"));
         assert_eq!(actual, 281);
     }
 
     #[test]
-    fn B_input() {
+    fn b_input() {
         let actual = run_b(&get_test_file_name(2023, 1, "input"));
         assert_eq!(actual, 53348);
     }
