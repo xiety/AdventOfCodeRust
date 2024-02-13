@@ -8,39 +8,32 @@ fn run_a(filename: &str) -> u32 {
 
     let cubes = [12, 13, 14];
 
-    let mut result = 0;
-
-    for item in items {
-        let mut good = true;
-
-        'toss: for toss in item.balls {
-            for i in 0..3 {
-                if cubes[i] < toss[i] { 
-                    good = false;
-                    break 'toss;
+    items
+        .into_iter()
+        .filter_map(|x| {
+            for toss in x.balls {
+                for i in 0..3 {
+                    if cubes[i] < toss[i] {
+                        return None;
+                    }
                 }
             }
-        }
 
-        if good { result += item.num; }
-    }
-
-    result
+            Some(x.num)
+        })
+        .sum()
 }
 
 fn parse(line: &str) -> Game {
     let re = Regex::new(r"^Game (?<GameNumber>\d+): (?<GameData>.*)$").unwrap();
 
     let caps = re.captures(line).unwrap();
-    let game_num: u32 = caps.get_type("GameNumber");
+    let num: u32 = caps.get_type("GameNumber");
     let game_data = caps.get_str("GameData");
 
     let balls = parse_game_data(game_data);
 
-    Game {
-        num: game_num,
-        balls: balls,
-    }
+    Game { num, balls }
 }
 
 fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
