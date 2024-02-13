@@ -12,11 +12,11 @@ pub fn macro_regex(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut parsers = Vec::new();
     let mut fields = Vec::new();
 
-    for (i, f) in input.fields.iter().enumerate() {
-        let v = format_ident!("__field_{}", i);
+    for f in input.fields.iter() {
         let ty = &f.ty;
         let id = &f.ident;
         let name = &f.ident.as_ref().unwrap().to_string();
+        let v = format_ident!("__{}", name);
 
         parsers.push(quote! {
             let #v: #ty = caps.name(#name).expect(#name).as_str().parse().unwrap();

@@ -34,14 +34,6 @@ fn run_b(filename: &str) -> u32 {
         .sum()
 }
 
-fn parse(line: &str) -> Game {
-    let r1: R1 = line.parse().unwrap();
-
-    let balls = parse_game_data(r1.data.as_str());
-
-    Game { num: r1.num, balls }
-}
-
 fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
     let colors = ["red", "green", "blue"];
 
@@ -51,13 +43,11 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
         .map(|toss| {
             let mut balls = [0, 0, 0];
 
-            let throws = toss.split(", ");
+            let throws = toss.split(", ").map(|x| x.parse::<R2>().unwrap());
 
             for throw in throws {
-                let r2: R2 = throw.parse().unwrap();
-
-                let index = colors.iter().index_of(&r2.color.as_str());
-                balls[index] = r2.num;
+                let index = colors.iter().index_of(&throw.color.as_str());
+                balls[index] = throw.num;
             }
 
             balls
@@ -68,7 +58,11 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
 fn load(filename: &str) -> Vec<Game> {
     helpers::read_lines(filename)
         .into_iter()
-        .map(|x| parse(&x))
+        .map(|x| x.parse::<R1>().unwrap())
+        .map(|x| Game {
+            num: x.num,
+            balls: parse_game_data(x.data.as_str()),
+        })
         .collect()
 }
 
