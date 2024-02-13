@@ -16,9 +16,10 @@ pub fn macro_regex(attr: TokenStream, item: TokenStream) -> TokenStream {
         let v = format_ident!("__field_{}", i);
         let ty = &f.ty;
         let id = &f.ident;
+        let name = &f.ident.as_ref().unwrap().to_string();
 
         parsers.push(quote! {
-            let #v: #ty = caps.get(#i+1).unwrap().as_str().parse().unwrap();
+            let #v: #ty = caps.name(#name).expect(#name).as_str().parse().unwrap();
         });
 
         fields.push(quote! {
@@ -49,8 +50,6 @@ pub fn macro_regex(attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     let ts = TokenStream::from(fs);
-
-    println!("{}", ts);
 
     ts
 }
