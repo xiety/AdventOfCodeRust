@@ -4,10 +4,7 @@ use regex_lite::Regex;
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
-    let items = helpers::read_lines(filename)
-        .into_iter()
-        .map(|x| parse(&x))
-        .collect::<Vec<_>>();
+    let items = load(filename);
 
     let cubes = [12, 13, 14];
 
@@ -76,15 +73,36 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
     list
 }
 
+#[allow(dead_code)]
+fn run_b(filename: &str) -> u32 {
+    let items = load(filename);
+
+    let mut result = 0;
+
+    for item in items {
+        let mut mul = 1;
+
+        for i in 0..3 {
+            mul *= item.balls.iter().map(|x| x[i]).max().unwrap();
+        }
+
+        result += mul;
+    }
+
+    result
+}
+
+fn load(filename: &str) -> Vec<Game> {
+    helpers::read_lines(filename)
+        .into_iter()
+        .map(|x| parse(&x))
+        .collect::<Vec<_>>()
+}
+
 #[derive(Debug)]
 struct Game {
     num: u32,
     balls: Vec<[u32; 3]>,
-}
-
-#[allow(dead_code)]
-fn run_b(filename: &str) -> u32 {
-    0
 }
 
 #[cfg(test)]
