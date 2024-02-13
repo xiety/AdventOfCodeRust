@@ -12,18 +12,14 @@ fn run_a(filename: &str) -> u32 {
         .into_iter()
         .filter_map(|x| {
             for toss in x.balls {
-                for i in 0..3 {
-                    if cubes[i] < toss[i] {
-                        return None;
-                    }
+                if (0..3).any(|i| cubes[i] < toss[i]) {
+                    return None;
                 }
             }
-
             Some(x.num)
         })
         .sum()
 }
-
 
 #[allow(dead_code)]
 fn run_b(filename: &str) -> u32 {
