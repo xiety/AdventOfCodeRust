@@ -9,7 +9,7 @@ fn run_a(filename: &str) -> u32 {
     let lines = LinesMap::load(filename);
 
     lines
-        .enumerate()
+        .enumerate_lines()
         .flat_map(|(index, line)| {
             let lines = &lines;
             let cy = index as i32;
@@ -17,8 +17,7 @@ fn run_a(filename: &str) -> u32 {
                 .map(get_capture)
                 .filter_map(move |(from, to, num)| {
                     lines
-                        .for2d(from - 1, to + 1, cy - 1, cy + 2)
-                        .map(|(x, y)| lines.get_char(x, y))
+                        .chars2d(from - 1, to + 1, cy - 1, cy + 2)
                         .any(|p| !p.is_ascii_digit() && p != '.')
                         .then_some(num)
                 })
@@ -38,6 +37,10 @@ impl LinesMap {
             .filter(move |(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
     }
 
+    fn chars2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = char> + '_ {
+        self.for2d(fx, tx, fy, ty).map(move |(x, y)| self.get_char(x, y))
+    }
+
     fn load(filename: &str) -> LinesMap {
         LinesMap {
             lines: read_lines(filename),
@@ -54,7 +57,7 @@ impl LinesMap {
         self.lines[y as usize].chars().nth(x as usize).unwrap()
     }
 
-    fn enumerate(&self) -> Enumerate<std::slice::Iter<String>> {
+    fn enumerate_lines(&self) -> Enumerate<std::slice::Iter<String>> {
         self.lines.iter().enumerate()
     }
 }
