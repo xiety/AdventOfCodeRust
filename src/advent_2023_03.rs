@@ -1,6 +1,5 @@
-use std::iter::Enumerate;
+use crate::lines_map::LinesMap;
 
-use crate::helpers::read_lines;
 use regex_lite::{Captures, Regex};
 
 #[allow(dead_code)]
@@ -23,43 +22,6 @@ fn run_a(filename: &str) -> u32 {
                 })
         })
         .sum()
-}
-
-struct LinesMap {
-    lines: Vec<String>,
-}
-
-impl LinesMap {
-    fn for2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
-        let (width, height) = self.get_size();
-        (fy..ty)
-            .flat_map(move |y| (fx..tx).map(move |x| (x, y)))
-            .filter(move |(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
-    }
-
-    fn chars2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = char> + '_ {
-        self.for2d(fx, tx, fy, ty).map(move |(x, y)| self.get_char(x, y))
-    }
-
-    fn load(filename: &str) -> LinesMap {
-        LinesMap {
-            lines: read_lines(filename),
-        }
-    }
-
-    fn get_size(&self) -> (i32, i32) {
-        let width = self.lines[0].len() as i32;
-        let height = self.lines.len() as i32;
-        (width, height)
-    }
-
-    fn get_char(&self, x: i32, y: i32) -> char {
-        self.lines[y as usize].chars().nth(x as usize).unwrap()
-    }
-
-    fn enumerate_lines(&self) -> Enumerate<std::slice::Iter<String>> {
-        self.lines.iter().enumerate()
-    }
 }
 
 fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
