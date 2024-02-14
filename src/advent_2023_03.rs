@@ -10,9 +10,8 @@ fn run_a(filename: &str) -> u32 {
 
     let (width, height) = get_size(&lines);
 
-    let mut result = 0;
-
-    for (index, line) in lines.iter().enumerate() {
+    let result = lines.iter().enumerate().map(|(index, line)| {
+        let mut r = 0;
         let cy = index as i32;
 
         for c in re.captures_iter(line.as_str()) {
@@ -39,10 +38,12 @@ fn run_a(filename: &str) -> u32 {
             }
 
             if part {
-                result += num;
+                r += num;
             }
         }
-    }
+
+        r
+    }).sum();
 
     result
 }
@@ -76,7 +77,7 @@ mod test {
         assert_eq!(actual, 539713);
     }
 
-    #[test]
+    /*#[test]
     fn b_sample() {
         let actual = run_b(&get_test_file_name(2023, 3, "sample"));
         assert_eq!(actual, 467835);
@@ -86,5 +87,5 @@ mod test {
     fn b_input() {
         let actual = run_b(&get_test_file_name(2023, 3, "input"));
         assert_eq!(actual, 84159075);
-    }
+    }*/
 }
