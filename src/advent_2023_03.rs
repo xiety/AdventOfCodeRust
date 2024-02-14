@@ -26,10 +26,8 @@ fn run_a(filename: &str) -> u32 {
                         max(0, cy - 1),
                         min(height, cy + 2),
                     )
-                    .any(|(x, y)| {
-                        let p = get_char(&lines, x, y);
-                        !p.is_digit(10) && p != '.'
-                    })
+                    .map(|(x, y)| get_char(&lines, x, y))
+                    .any(|p| !p.is_digit(10) && p != '.')
                     .then_some(num)
                 })
         })
