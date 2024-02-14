@@ -1,4 +1,4 @@
-use std::cmp::{max, min};
+use std::{cmp::{max, min}, ops::Range};
 
 use crate::helpers::read_lines;
 use regex_lite::{Captures, Regex};
@@ -21,10 +21,8 @@ fn run_a(filename: &str) -> u32 {
                     let cy = index as i32;
 
                     for2d(
-                        max(0, from - 1),
-                        min(width, to + 1),
-                        max(0, cy - 1),
-                        min(height, cy + 2),
+                        max(0, from - 1)..min(width, to + 1),
+                        max(0, cy - 1)..min(height, cy + 2),
                     )
                     .map(|(x, y)| get_char(&lines, x, y))
                     .any(|p| !p.is_digit(10) && p != '.')
@@ -47,10 +45,8 @@ fn get_char(lines: &Vec<String>, x: i32, y: i32) -> char {
     lines[y as usize].chars().nth(x as usize).unwrap()
 }
 
-fn for2d(fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
-    (fy..ty)
-        .into_iter()
-        .flat_map(move |y| (fx..tx).map(move |x| (x, y)))
+fn for2d(rx: Range<i32>, ry: Range<i32>) -> impl Iterator<Item = (i32, i32)> {
+    ry.flat_map(move |y| rx.clone().map(move |x| (x, y)))
 }
 
 fn get_size(lines: &Vec<String>) -> (i32, i32) {
