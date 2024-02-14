@@ -1,7 +1,7 @@
 use std::cmp::{max, min};
 
 use crate::helpers::read_lines;
-use regex_lite::Regex;
+use regex_lite::{Captures, Regex};
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
@@ -14,14 +14,10 @@ fn run_a(filename: &str) -> u32 {
         .iter()
         .enumerate()
         .map(|(index, line)| {
-            let cy = index as i32;
-
             re.captures_iter(line.as_str())
                 .filter_map(|c| {
-                    let m = c.get(0).unwrap();
-                    let from = m.start() as i32;
-                    let to = m.end() as i32;
-                    let num: u32 = m.as_str().parse().unwrap();
+                    let (from, to, num) = get_capture(c);
+                    let cy = index as i32;
 
                     for2d(
                         max(0, from - 1),
@@ -41,7 +37,16 @@ fn run_a(filename: &str) -> u32 {
         .sum()
 }
 
-fn get_char(lines: &Vec<String>, x: i32, y:i32) -> char {
+fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
+    let m = c.get(0).unwrap();
+    let from = m.start() as i32;
+    let to = m.end() as i32;
+    let num: u32 = m.as_str().parse().unwrap();
+
+    (from, to, num)
+}
+
+fn get_char(lines: &Vec<String>, x: i32, y: i32) -> char {
     lines[y as usize].chars().nth(x as usize).unwrap()
 }
 
