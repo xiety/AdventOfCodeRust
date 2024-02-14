@@ -18,16 +18,15 @@ fn run_a(filename: &str) -> u32 {
         .enumerate()
         .flat_map(|(index, line)| {
             let lines = &lines;
-            re.captures_iter(line.as_str()).filter_map(move |c| {
-                let (from, to, num) = get_capture(c);
-                let cy = index as i32;
-
-                for2d(from - 1, to + 1, cy - 1, cy + 2)
-                    .filter(|(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
-                    .map(|(x, y)| get_char(&lines, x, y))
-                    .any(|p| !p.is_ascii_digit() && p != '.')
-                    .then_some(num)
-            })
+            re.captures_iter(line.as_str())
+                .map(get_capture)
+                .filter_map(move |(from, to, num)| {
+                    for2d(from - 1, to + 1, index as i32 - 1, index as i32 + 2)
+                        .filter(|(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
+                        .map(|(x, y)| get_char(&lines, x, y))
+                        .any(|p| !p.is_ascii_digit() && p != '.')
+                        .then_some(num)
+                })
         })
         .sum()
 }
