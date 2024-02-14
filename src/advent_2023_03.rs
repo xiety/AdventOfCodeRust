@@ -23,26 +23,32 @@ fn run_a(filename: &str) -> u32 {
                     let to = m.end() as i32;
                     let num: u32 = m.as_str().parse().unwrap();
 
-                    let mut part = false;
-
-                    'y: for y in max(0, cy - 1)..min(height, cy + 2) {
-                        let subline = &lines[y as usize];
-
-                        for x in max(0, from - 1)..min(width, to + 1) {
-                            let p = subline.chars().nth(x as usize).unwrap();
-
-                            if !p.is_digit(10) && p != '.' {
-                                part = true;
-                                break 'y;
-                            }
-                        }
-                    }
-
-                    part.then_some(num)
+                    for2d(
+                        max(0, from - 1),
+                        min(width, to + 1),
+                        max(0, cy - 1),
+                        min(height, cy + 2),
+                    )
+                    .into_iter()
+                    .any(|(x, y)| {
+                        let p = get_char(&lines, x, y);
+                        !p.is_digit(10) && p != '.'
+                    })
+                    .then_some(num)
                 })
                 .sum::<u32>()
         })
         .sum()
+}
+
+fn get_char(lines: &Vec<String>, x: i32, y:i32) -> char {
+    lines[y as usize].chars().nth(x as usize).unwrap()
+}
+
+fn for2d(fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
+    (fy..ty)
+        .into_iter()
+        .flat_map(move |y| (fx..tx).map(move |x| (x, y)))
 }
 
 fn get_size(lines: &Vec<String>) -> (i32, i32) {
