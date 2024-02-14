@@ -13,9 +13,10 @@ fn run_a(filename: &str) -> u32 {
     lines
         .iter()
         .enumerate()
-        .map(|(index, line)| {
+        .flat_map(|(index, line)| {
+            let lines = &lines;
             re.captures_iter(line.as_str())
-                .filter_map(|c| {
+                .filter_map(move |c| {
                     let (from, to, num) = get_capture(c);
                     let cy = index as i32;
 
@@ -25,14 +26,12 @@ fn run_a(filename: &str) -> u32 {
                         max(0, cy - 1),
                         min(height, cy + 2),
                     )
-                    .into_iter()
                     .any(|(x, y)| {
                         let p = get_char(&lines, x, y);
                         !p.is_digit(10) && p != '.'
                     })
                     .then_some(num)
                 })
-                .sum::<u32>()
         })
         .sum()
 }
