@@ -12,16 +12,18 @@ fn run_a(filename: &str) -> u32 {
         .flat_map(|(index, line)| {
             let lines = &lines;
             let cy = index as i32;
-            re.captures_iter(line.as_str())
-                .map(get_capture)
-                .filter_map(move |(from, to, num)| {
-                    lines
-                        .chars2d(from - 1, to + 1, cy - 1, cy + 2)
-                        .any(|p| !p.is_ascii_digit() && p != '.')
-                        .then_some(num)
-                })
+            iterate_captures(&re, line).filter_map(move |(from, to, num)| {
+                lines
+                    .chars2d(from - 1, to + 1, cy - 1, cy + 2)
+                    .any(|p| !p.is_ascii_digit() && p != '.')
+                    .then_some(num)
+            })
         })
         .sum()
+}
+
+fn iterate_captures<'a>(re: &'a Regex, line: &'a str) -> impl Iterator<Item = (i32, i32, u32)> + 'a {
+    re.captures_iter(line).map(get_capture)
 }
 
 fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
