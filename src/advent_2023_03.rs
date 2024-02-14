@@ -10,42 +10,39 @@ fn run_a(filename: &str) -> u32 {
 
     let (width, height) = get_size(&lines);
 
-    let result = lines.iter().enumerate().map(|(index, line)| {
-        let mut r = 0;
-        let cy = index as i32;
+    lines
+        .iter()
+        .enumerate()
+        .map(|(index, line)| {
+            let cy = index as i32;
 
-        for c in re.captures_iter(line.as_str()) {
-            let m = c.get(0).unwrap();
-            let from = m.start() as i32;
-            let to = m.end() as i32;
-            let num: u32 = m.as_str().parse().unwrap();
+            re.captures_iter(line.as_str())
+                .filter_map(|c| {
+                    let m = c.get(0).unwrap();
+                    let from = m.start() as i32;
+                    let to = m.end() as i32;
+                    let num: u32 = m.as_str().parse().unwrap();
 
-            let mut part = false;
+                    let mut part = false;
 
-            'y: for y in max(0, cy - 1)..min(height, cy + 2) {
+                    'y: for y in max(0, cy - 1)..min(height, cy + 2) {
+                        let subline = &lines[y as usize];
 
-                let subline = &lines[y as usize];
+                        for x in max(0, from - 1)..min(width, to + 1) {
+                            let p = subline.chars().nth(x as usize).unwrap();
 
-                for x in max(0, from - 1)..min(width, to + 1) {
-
-                    let p = subline.chars().nth(x as usize).unwrap();
-
-                    if !p.is_digit(10) && p != '.' {
-                        part = true;
-                        break 'y;
+                            if !p.is_digit(10) && p != '.' {
+                                part = true;
+                                break 'y;
+                            }
+                        }
                     }
-                }
-            }
 
-            if part {
-                r += num;
-            }
-        }
-
-        r
-    }).sum();
-
-    result
+                    part.then_some(num)
+                })
+                .sum::<u32>()
+        })
+        .sum()
 }
 
 fn get_size(lines: &Vec<String>) -> (i32, i32) {
