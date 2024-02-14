@@ -8,8 +8,7 @@ fn run_a(filename: &str) -> u32 {
     let re = Regex::new(r"\d+").unwrap();
     let lines = read_lines(filename);
 
-    let width = lines[0].len() as i32;
-    let height = lines.len() as i32;
+    let (width, height) = get_size(&lines);
 
     let mut result = 0;
 
@@ -46,6 +45,13 @@ fn run_a(filename: &str) -> u32 {
     }
 
     result
+}
+
+fn get_size(lines: &Vec<String>) -> (i32, i32) {
+    let width = lines[0].len() as i32;
+    let height = lines.len() as i32;
+
+    (width, height)
 }
 
 #[allow(dead_code)]
