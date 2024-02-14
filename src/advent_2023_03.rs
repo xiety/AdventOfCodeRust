@@ -8,17 +8,16 @@ fn run_a(filename: &str) -> u32 {
     let re = Regex::new(r"\d+").unwrap();
     let lines = LinesMap::load(filename);
 
-    let (width, height) = &lines.get_size();
-
     lines
         .enumerate()
         .flat_map(|(index, line)| {
             let lines = &lines;
+            let cy = index as i32;
             re.captures_iter(line.as_str())
                 .map(get_capture)
                 .filter_map(move |(from, to, num)| {
-                    for2d(from - 1, to + 1, index as i32 - 1, index as i32 + 2)
-                        .filter(|(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
+                    lines
+                        .for2d(from - 1, to + 1, cy - 1, cy + 2)
                         .map(|(x, y)| lines.get_char(x, y))
                         .any(|p| !p.is_ascii_digit() && p != '.')
                         .then_some(num)
@@ -32,12 +31,17 @@ struct LinesMap {
 }
 
 impl LinesMap {
-    //fn for2d(self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = char> {
-    //    (fy..ty).flat_map(move |y| (fx..tx).map(move |x| self.get_char(x, y)))
-    //}
+    fn for2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
+        let (width, height) = self.get_size();
+        (fy..ty)
+            .flat_map(move |y| (fx..tx).map(move |x| (x, y)))
+            .filter(move |(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
+    }
 
     fn load(filename: &str) -> LinesMap {
-        LinesMap { lines: read_lines(filename) }
+        LinesMap {
+            lines: read_lines(filename),
+        }
     }
 
     fn get_size(&self) -> (i32, i32) {
@@ -53,10 +57,6 @@ impl LinesMap {
     fn enumerate(&self) -> Enumerate<std::slice::Iter<String>> {
         self.lines.iter().enumerate()
     }
-}
-
-fn for2d(fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
-    (fy..ty).flat_map(move |y| (fx..tx).map(move |x| (x, y)))
 }
 
 fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
