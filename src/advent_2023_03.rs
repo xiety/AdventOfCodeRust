@@ -1,7 +1,4 @@
-use std::{
-    cmp::{max, min},
-    ops::Range,
-};
+use std::iter::Enumerate;
 
 use crate::helpers::read_lines;
 use regex_lite::{Captures, Regex};
@@ -9,12 +6,11 @@ use regex_lite::{Captures, Regex};
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
     let re = Regex::new(r"\d+").unwrap();
-    let lines = read_lines(filename);
+    let lines = LinesMap::load(filename);
 
-    let (width, height) = get_size(&lines);
+    let (width, height) = &lines.get_size();
 
     lines
-        .iter()
         .enumerate()
         .flat_map(|(index, line)| {
             let lines = &lines;
@@ -23,12 +19,44 @@ fn run_a(filename: &str) -> u32 {
                 .filter_map(move |(from, to, num)| {
                     for2d(from - 1, to + 1, index as i32 - 1, index as i32 + 2)
                         .filter(|(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
-                        .map(|(x, y)| get_char(&lines, x, y))
+                        .map(|(x, y)| lines.get_char(x, y))
                         .any(|p| !p.is_ascii_digit() && p != '.')
                         .then_some(num)
                 })
         })
         .sum()
+}
+
+struct LinesMap {
+    lines: Vec<String>,
+}
+
+impl LinesMap {
+    //fn for2d(self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = char> {
+    //    (fy..ty).flat_map(move |y| (fx..tx).map(move |x| self.get_char(x, y)))
+    //}
+
+    fn load(filename: &str) -> LinesMap {
+        LinesMap { lines: read_lines(filename) }
+    }
+
+    fn get_size(&self) -> (i32, i32) {
+        let width = self.lines[0].len() as i32;
+        let height = self.lines.len() as i32;
+        (width, height)
+    }
+
+    fn get_char(&self, x: i32, y: i32) -> char {
+        self.lines[y as usize].chars().nth(x as usize).unwrap()
+    }
+
+    fn enumerate(&self) -> Enumerate<std::slice::Iter<String>> {
+        self.lines.iter().enumerate()
+    }
+}
+
+fn for2d(fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
+    (fy..ty).flat_map(move |y| (fx..tx).map(move |x| (x, y)))
 }
 
 fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
@@ -38,21 +66,6 @@ fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
     let num: u32 = m.as_str().parse().unwrap();
 
     (from, to, num)
-}
-
-fn get_char(lines: &Vec<String>, x: i32, y: i32) -> char {
-    lines[y as usize].chars().nth(x as usize).unwrap()
-}
-
-fn for2d(fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (i32, i32)> {
-    (fy..ty).flat_map(move |y| (fx..tx).map(move |x| (x, y)))
-}
-
-fn get_size(lines: &Vec<String>) -> (i32, i32) {
-    let width = lines[0].len() as i32;
-    let height = lines.len() as i32;
-
-    (width, height)
 }
 
 #[allow(dead_code)]
