@@ -19,7 +19,7 @@ fn process_a(string: &str) -> u32 {
 
 fn get_digit(chars: impl Iterator<Item = char>) -> u32 {
     chars
-        .filter(|c| c.is_digit(10))
+        .filter(|c| c.is_ascii_digit())
         .first()
         .to_digit(10)
         .unwrap()
