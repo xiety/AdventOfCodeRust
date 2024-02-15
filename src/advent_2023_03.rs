@@ -39,7 +39,6 @@ fn run_b(filename: &str) -> u32 {
             })
         })
         .group_by(|&(_num, x, y)| (x, y))
-        .into_iter()
         .filter(|(_key, list)| list.len() == 2)
         .map(|(_key, list)| list.into_iter().map(|(num, _x, _y)| num).product::<u32>())
         .sum()

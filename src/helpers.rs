@@ -18,7 +18,7 @@ pub trait IteratorExt<T> {
     where
         T: PartialEq;
 
-    fn group_by<TKey, F>(self, f: F) -> BTreeMap<TKey, Vec<T>>
+    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item=(TKey, Vec<T>)>
     where
         TKey: Ord,
         F: Fn(&T) -> TKey;
@@ -39,16 +39,17 @@ where
         self.position(|x| x == value).unwrap()
     }
 
-    fn group_by<TKey, F>(self, f: F) -> BTreeMap<TKey, Vec<T>>
+    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item=(TKey, Vec<T>)>
     where
         TKey: Ord,
         F: Fn(&T) -> TKey,
     {
-        self.into_iter().fold(BTreeMap::new(), |mut acc, item| {
+        self.into_iter().fold(BTreeMap::<TKey, Vec<T>>::new(), |mut acc, item| {
             let key = f(&item);
             acc.entry(key).or_default().push(item);
             acc
         })
+        .into_iter()
     }
 }
 
