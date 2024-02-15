@@ -38,10 +38,10 @@ fn run_b(filename: &str) -> u32 {
                     .filter_map(move |(c, x, y)| (c == '*').then_some((num, x, y)))
             })
         })
-        .group_by(|x| (x.1, x.2))
+        .group_by(|&(_num, x, y)| (x, y))
         .into_iter()
-        .filter(|bt| bt.1.len() == 2)
-        .map(|bt| bt.1.into_iter().map(|w| w.0).product::<u32>())
+        .filter(|(_key, list)| list.len() == 2)
+        .map(|(_key, list)| list.into_iter().map(|(num, _x, _y)| num).product::<u32>())
         .sum()
 }
 
