@@ -63,12 +63,11 @@ fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
 #[cfg(test)]
 mod test {
     use super::{run_a, run_b};
-    use crate::test_base::get_test_file_name;
+    use crate::test_base::{get_test_file_name, run_test};
 
     #[test]
     fn a_sample() {
-        let actual = run_a(&get_test_file_name(2023, 3, "sample"));
-        assert_eq!(actual, 4361);
+        run_test(2023, 3, "sample", run_a, 4361)
     }
 
     #[test]
