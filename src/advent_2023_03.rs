@@ -15,7 +15,7 @@ fn run_a(filename: &str) -> u32 {
             iterate_captures(&re, line).filter_map(move |(from, to, num)| {
                 lines
                     .chars2d(from - 1, to + 1, cy - 1, cy + 2)
-                    .any(|(c, _, _)| !c.is_ascii_digit() && c != '.')
+                    .any(|c| !c.is_ascii_digit() && c != '.')
                     .then_some(num)
             })
         })
@@ -34,7 +34,7 @@ fn run_b(filename: &str) -> u32 {
             let cy = index as i32;
             iterate_captures(&re, line).flat_map(move |(from, to, num)| {
                 lines
-                    .chars2d(from - 1, to + 1, cy - 1, cy + 2)
+                    .enumerate_chars2d(from - 1, to + 1, cy - 1, cy + 2)
                     .filter_map(move |(c, x, y)| (c == '*').then_some((num, x, y)))
             })
         })
