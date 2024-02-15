@@ -2,7 +2,6 @@
     "editor.inlayHints.enabled": "offUnlessPressed",
     "editor.renderWhitespace": "trailing",
     "rust-analyzer.linkedProjects": [
-        ".\\Cargo.toml",
         ".\\Cargo.toml"
     ]
 }
