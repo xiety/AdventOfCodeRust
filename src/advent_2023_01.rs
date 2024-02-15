@@ -78,7 +78,7 @@ fn process_b(line: &str) -> u32 {
 #[cfg(test)]
 mod test {
     use super::{run_a, run_b};
-    use crate::test_base::run_test;
+    use crate::test_base::test::run_test;
 
     #[test]
     fn a_sample() {
