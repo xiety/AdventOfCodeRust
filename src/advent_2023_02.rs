@@ -83,29 +83,25 @@ struct R2 {
 #[cfg(test)]
 mod test {
     use super::{run_a, run_b};
-    use crate::test_base::get_test_file_name;
+    use crate::test_base::run_test;
 
     #[test]
     fn a_sample() {
-        let actual = run_a(&get_test_file_name(2023, 2, "sample"));
-        assert_eq!(actual, 8);
+        run_test(file!(), "sample", run_a, 8);
     }
 
     #[test]
     fn a_input() {
-        let actual = run_a(&get_test_file_name(2023, 2, "input"));
-        assert_eq!(actual, 3059);
+        run_test(file!(), "input", run_a, 3059);
     }
 
     #[test]
     fn b_sample() {
-        let actual = run_b(&get_test_file_name(2023, 2, "sample"));
-        assert_eq!(actual, 2286);
+        run_test(file!(), "sample", run_b, 2286);
     }
 
     #[test]
     fn b_input() {
-        let actual = run_b(&get_test_file_name(2023, 2, "input"));
-        assert_eq!(actual, 65371);
+        run_test(file!(), "input", run_b, 65371);
     }
 }

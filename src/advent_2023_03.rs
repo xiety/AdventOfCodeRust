@@ -63,28 +63,25 @@ fn get_capture(c: Captures<'_>) -> (i32, i32, u32) {
 #[cfg(test)]
 mod test {
     use super::{run_a, run_b};
-    use crate::test_base::{get_test_file_name, run_test};
+    use crate::test_base::run_test;
 
     #[test]
     fn a_sample() {
-        run_test(2023, 3, "sample", run_a, 4361)
+        run_test(file!(), "sample", run_a, 4361);
     }
 
     #[test]
     fn a_input() {
-        let actual = run_a(&get_test_file_name(2023, 3, "input"));
-        assert_eq!(actual, 539713);
+        run_test(file!(), "input", run_a, 539713);
     }
 
     #[test]
     fn b_sample() {
-        let actual = run_b(&get_test_file_name(2023, 3, "sample"));
-        assert_eq!(actual, 467835);
+        run_test(file!(), "sample", run_b, 467835);
     }
 
     #[test]
     fn b_input() {
-        let actual = run_b(&get_test_file_name(2023, 3, "input"));
-        assert_eq!(actual, 84159075);
+        run_test(file!(), "input", run_b, 84159075);
     }
 }

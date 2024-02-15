@@ -78,29 +78,25 @@ fn process_b(line: &str) -> u32 {
 #[cfg(test)]
 mod test {
     use super::{run_a, run_b};
-    use crate::test_base::get_test_file_name;
+    use crate::test_base::run_test;
 
     #[test]
     fn a_sample() {
-        let actual = run_a(&get_test_file_name(2023, 1, "sampleA"));
-        assert_eq!(actual, 142);
+        run_test(file!(), "sampleA", run_a, 142);
     }
 
     #[test]
     fn a_input() {
-        let actual = run_a(&get_test_file_name(2023, 1, "input"));
-        assert_eq!(actual, 54644);
+        run_test(file!(), "input", run_a, 54644);
     }
 
     #[test]
     fn b_sample() {
-        let actual = run_b(&get_test_file_name(2023, 1, "sampleB"));
-        assert_eq!(actual, 281);
+        run_test(file!(), "sampleB", run_b, 281);
     }
 
     #[test]
     fn b_input() {
-        let actual = run_b(&get_test_file_name(2023, 1, "input"));
-        assert_eq!(actual, 53348);
+        run_test(file!(), "input", run_b, 53348);
     }
 }
