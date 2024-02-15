@@ -14,9 +14,9 @@ impl LinesMap {
             .filter(move |(x, y)| x >= &0 && x < &width && y >= &0 && y < &height)
     }
 
-    pub fn chars2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = char> + '_ {
+    pub fn chars2d(&self, fx: i32, tx: i32, fy: i32, ty: i32) -> impl Iterator<Item = (char, i32, i32)> + '_ {
         self.for2d(fx, tx, fy, ty)
-            .map(move |(x, y)| self.get_char(x, y))
+            .map(move |(x, y)| (self.get_char(x, y), x, y))
     }
 
     pub fn load(filename: &str) -> LinesMap {

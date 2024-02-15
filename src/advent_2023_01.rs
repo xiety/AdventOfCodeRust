@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use crate::helpers;
 use crate::helpers::IteratorExt;
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
