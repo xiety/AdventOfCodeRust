@@ -11,6 +11,37 @@ pub fn read_lines(filename: &str) -> Vec<String> {
         .collect()
 }
 
+pub fn read_parsed<T>(filename: &str) -> Vec<T>
+where
+    T: FromStr,
+    <T as FromStr>::Err: Debug,
+{
+    read_lines(filename)
+        .into_iter()
+        .map(|x| x.parse::<T>().unwrap())
+        .collect()
+}
+
+pub trait StringExt {
+    fn split_to_array<T>(&self) -> Vec<T>
+    where
+        T: FromStr,
+        <T as FromStr>::Err: Debug;
+}
+
+impl StringExt for String {
+    fn split_to_array<T>(&self) -> Vec<T>
+    where
+        T: FromStr,
+        <T as FromStr>::Err: Debug,
+    {
+        self.split(' ')
+            .filter(|s| !s.is_empty())
+            .map(|s| s.parse::<T>().unwrap())
+            .collect()
+    }
+}
+
 pub trait IteratorExt<T> {
     fn first(&mut self) -> T;
 
@@ -18,7 +49,7 @@ pub trait IteratorExt<T> {
     where
         T: PartialEq;
 
-    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item=(TKey, Vec<T>)>
+    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item = (TKey, Vec<T>)>
     where
         TKey: Ord,
         F: Fn(&T) -> TKey;
@@ -39,17 +70,18 @@ where
         self.position(|x| x == value).unwrap()
     }
 
-    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item=(TKey, Vec<T>)>
+    fn group_by<TKey, F>(self, f: F) -> impl Iterator<Item = (TKey, Vec<T>)>
     where
         TKey: Ord,
         F: Fn(&T) -> TKey,
     {
-        self.into_iter().fold(BTreeMap::<TKey, Vec<T>>::new(), |mut acc, item| {
-            let key = f(&item);
-            acc.entry(key).or_default().push(item);
-            acc
-        })
-        .into_iter()
+        self.into_iter()
+            .fold(BTreeMap::<TKey, Vec<T>>::new(), |mut acc, item| {
+                let key = f(&item);
+                acc.entry(key).or_default().push(item);
+                acc
+            })
+            .into_iter()
     }
 }
 
