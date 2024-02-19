@@ -7,19 +7,17 @@ fn run_a(filename: &str) -> u32 {
         .into_iter()
         .map(parse)
         .map(|c| {
-            let win = c
+            match c
                 .left
                 .into_iter()
-                .map(move |cl| if c.right.contains(&cl) { 1 } else { 0 })
-                .sum::<u32>();
-
-            if win == 0 {
-                0
-            } else {
-                2u32.pow(win - 1)
+                .filter(move |cl| c.right.contains(&cl))
+                .count() as u32
+            {
+                0 => 0,
+                w => 2u32.pow(w - 1),
             }
         })
-        .sum::<u32>()
+        .sum()
 }
 
 fn parse(r1: R1) -> Card {
