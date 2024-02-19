@@ -1,51 +1,66 @@
+use std::cmp::min;
+
 use crate::helpers::{read_parsed, StringExt};
 use macros::macro_regex;
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> u32 {
-    read_parsed::<R1>(filename)
-        .into_iter()
-        .map(parse)
-        .map(|c| {
-            match c
-                .left
-                .into_iter()
-                .filter(move |cl| c.right.contains(&cl))
-                .count() as u32
-            {
-                0 => 0,
-                w => 2u32.pow(w - 1),
-            }
+    load(filename)
+        .map(|x| match calc_win(x) {
+            0 => 0,
+            w => 2_u32.pow(w - 1),
         })
         .sum()
 }
 
-fn parse(r1: R1) -> Card {
-    Card {
-        num: r1.num,
-        left: r1.left.split_to_array(),
-        right: r1.right.split_to_array(),
-    }
+fn calc_win(c: Card) -> u32 {
+    c.left
+        .into_iter()
+        .filter(move |cl| c.right.contains(&cl))
+        .count() as u32
+}
+
+fn load(filename: &str) -> impl Iterator<Item = Card> {
+    read_parsed::<R1>(filename).into_iter().map(|x| Card {
+        left: x.left.split_to_array(),
+        right: x.right.split_to_array(),
+    })
 }
 
 #[allow(dead_code)]
-fn run_b(filename: &str) -> u32 {
-    0
+pub fn run_b(filename: &str) -> u32 {
+    let mut calculates: Vec<Calc> = load(filename)
+        .map(move |c| Calc {
+            win: calc_win(c),
+            copies: 1,
+        })
+        .collect();
+
+    for i in 0..calculates.len() {
+        for j in (i + 1)..min(i + 1 + calculates[i].win as usize, calculates.len()) {
+            calculates[j].copies += calculates[i].copies;
+        }
+    }
+
+    calculates.into_iter().map(|x| x.copies).sum()
 }
 
-#[macro_regex(r"^Card\s+(?<num>\d+):\s+(?<left>.+)\s+\|\s+(?<right>.+)$")]
+#[macro_regex(r"^Card\s+\d+:\s+(?<left>.+)\s+\|\s+(?<right>.+)$")]
 #[derive(Debug)]
 struct R1 {
-    num: u32,
     left: String,
     right: String,
 }
 
 #[derive(Debug)]
 struct Card {
-    num: u32,
     left: Vec<u32>,
     right: Vec<u32>,
+}
+
+struct Calc {
+    win: u32,
+    copies: u32,
 }
 
 #[cfg(test)]
