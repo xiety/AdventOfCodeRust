@@ -1,4 +1,4 @@
-use crate::helpers::{self, IteratorExt};
+use crate::helpers::{read_lines, IteratorExt};
 
 use macros::macro_regex;
 
@@ -52,7 +52,7 @@ fn parse_game_data(line: &str) -> Vec<[u32; 3]> {
 }
 
 fn load(filename: &str) -> Vec<Game> {
-    helpers::read_lines(filename)
+    read_lines(filename)
         .into_iter()
         .map(|x| x.parse::<R1>().unwrap())
         .map(|x| Game {
