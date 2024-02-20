@@ -45,6 +45,8 @@ impl StringExt for String {
 pub trait IteratorExt<T> {
     fn first(&mut self) -> T;
 
+    fn first_option(&mut self) -> Option<T>;
+
     fn index_of(&mut self, value: T) -> usize
     where
         T: PartialEq;
@@ -53,6 +55,11 @@ pub trait IteratorExt<T> {
     where
         TKey: Ord,
         F: Fn(&T) -> TKey;
+
+    fn split(self, separator: T) -> Vec<Vec<T>>
+    where
+        T: PartialEq,
+        T: Clone;
 }
 
 impl<T, I> IteratorExt<T> for I
@@ -61,6 +68,10 @@ where
 {
     fn first(&mut self) -> T {
         self.next().unwrap()
+    }
+
+    fn first_option(&mut self) -> Option<T>{
+        self.next()
     }
 
     fn index_of(&mut self, value: T) -> usize
@@ -82,6 +93,30 @@ where
                 acc
             })
             .into_iter()
+    }
+
+    fn split(self, separator: T) -> Vec<Vec<T>>
+    where
+        T: PartialEq,
+        T: Clone,
+    {
+        let mut result = Vec::new();
+        let mut buffer = Vec::new();
+
+        for x in self {
+            if x == separator{
+                result.push(buffer.clone());
+                buffer.clear();
+            }else{
+                buffer.push(x)
+            }
+        }
+
+        if buffer.len() > 0 {
+            result.push(buffer);
+        }
+
+        result
     }
 }
 
