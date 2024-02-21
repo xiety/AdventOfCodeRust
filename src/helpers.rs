@@ -1,4 +1,5 @@
 use std::cmp::PartialEq;
+use std::cmp::PartialOrd;
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -60,6 +61,14 @@ pub trait IteratorExt<T> {
     where
         T: PartialEq,
         T: Clone;
+
+    fn distinct(self) -> impl Iterator<Item = T>
+    where
+        T: Eq + std::hash::Hash;
+
+    fn order(self) -> impl Iterator<Item = T>
+    where
+        T: Ord;
 }
 
 impl<T, I> IteratorExt<T> for I
@@ -86,13 +95,12 @@ where
         TKey: Ord,
         F: Fn(&T) -> TKey,
     {
-        self.into_iter()
-            .fold(BTreeMap::<TKey, Vec<T>>::new(), |mut acc, item| {
-                let key = f(&item);
-                acc.entry(key).or_default().push(item);
-                acc
-            })
-            .into_iter()
+        self.fold(BTreeMap::<TKey, Vec<T>>::new(), |mut acc, item| {
+            let key = f(&item);
+            acc.entry(key).or_default().push(item);
+            acc
+        })
+        .into_iter()
     }
 
     fn split(self, separator: &T) -> Vec<Vec<T>>
@@ -118,6 +126,41 @@ where
 
         result
     }
+
+    fn distinct(self) -> impl Iterator<Item = T>
+    where
+        T: Eq + std::hash::Hash,
+    {
+        self.collect::<std::collections::HashSet<T>>().into_iter()
+    }
+
+    fn order(self) -> impl Iterator<Item = T>
+    where
+        T: Ord,
+    {
+        let mut v = self.collect::<Vec<T>>();
+        v.sort();
+
+        v.into_iter()
+    }
+}
+
+pub trait IteratorExtClone<T>: Iterator<Item = T> + Clone {
+    fn pairs(self) -> impl Iterator<Item = (T, T)>;
+    fn pairs_every(self) -> impl Iterator<Item = (T, T)>;
+}
+
+impl<T, I> IteratorExtClone<T> for I
+where
+    I: Iterator<Item = T> + Clone,
+{
+    fn pairs(self) -> impl Iterator<Item = (T, T)> {
+        self.pairs_every().step_by(2)
+    }
+
+    fn pairs_every(self) -> impl Iterator<Item = (T, T)> {
+        self.clone().zip(self.skip(1))
+    }
 }
 
 pub trait CapturesExt<'h> {
@@ -139,5 +182,23 @@ impl<'h> CapturesExt<'h> for regex_lite::Captures<'h> {
 
     fn get_str(&self, name: &str) -> &str {
         self.name(name).unwrap().as_str()
+    }
+}
+
+pub fn is_intersect<T: PartialOrd>(from_a: T, to_a: T, from_b: T, to_b: T) -> bool {
+    !((from_a > to_b) || (to_a < from_b))
+}
+
+pub fn intersect<T: PartialOrd>(from_a: T, to_a: T, from_b: T, to_b: T) -> Option<(T, T)> {
+    if from_a >= from_b && to_a <= to_b {
+        Some((from_a, to_a))
+    } else if from_a <= from_b && to_a >= to_b {
+        Some((from_b, to_b))
+    } else if from_a <= from_b && to_a <= to_b {
+        Some((from_b, to_a))
+    } else if from_a >= from_b && to_a >= to_b {
+        Some((from_a, to_b))
+    } else {
+        None
     }
 }
