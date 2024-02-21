@@ -2,7 +2,7 @@ use crate::helpers::{read_lines, IteratorExt};
 
 #[allow(dead_code)]
 fn run_a(filename: &str) -> usize {
-    let parts = read_lines(filename).into_iter().split("".to_string());
+    let parts = read_lines(filename).into_iter().split(&"".to_string());
 
     let seeds = parts[0][0]
         .split(" ")
@@ -19,12 +19,12 @@ fn run_a(filename: &str) -> usize {
 
     seeds
         .into_iter()
-        .map(|x| recurse_a(&chunks, &"seed".to_string(), x))
+        .map(|x| recurse_a(&chunks, "seed", x))
         .min()
         .unwrap()
 }
 
-fn recurse_a(chunks: &Vec<Chunk>, from: &String, from_value: usize) -> usize {
+fn recurse_a(chunks: &Vec<Chunk>, from: &str, from_value: usize) -> usize {
     if from == "location" {
         return from_value;
     }
@@ -38,10 +38,9 @@ fn recurse_a(chunks: &Vec<Chunk>, from: &String, from_value: usize) -> usize {
         .filter(|x| x.source_start < from_value && x.source_end >= from_value)
         .first_option();
 
-    let result = if let Some(target) = target_option {
-        target.target_start + (from_value - target.source_start)
-    } else {
-        from_value
+    let result = match target_option {
+        Some(target) => target.target_start + (from_value - target.source_start),
+        None => from_value,
     };
 
     recurse_a(chunks, &chunk.to, result)
@@ -80,7 +79,6 @@ fn parse_map(a: &String) -> ItemMap {
     ItemMap {
         target_start: splits[0],
         source_start: splits[1],
-        target_end: splits[0] + splits[2] - 1,
         source_end: splits[1] + splits[2] - 1,
     }
 }
@@ -96,7 +94,6 @@ struct Chunk {
 struct ItemMap {
     target_start: usize,
     source_start: usize,
-    target_end: usize,
     source_end: usize,
 }
 

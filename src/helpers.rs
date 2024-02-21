@@ -56,7 +56,7 @@ pub trait IteratorExt<T> {
         TKey: Ord,
         F: Fn(&T) -> TKey;
 
-    fn split(self, separator: T) -> Vec<Vec<T>>
+    fn split(self, separator: &T) -> Vec<Vec<T>>
     where
         T: PartialEq,
         T: Clone;
@@ -70,7 +70,7 @@ where
         self.next().unwrap()
     }
 
-    fn first_option(&mut self) -> Option<T>{
+    fn first_option(&mut self) -> Option<T> {
         self.next()
     }
 
@@ -95,7 +95,7 @@ where
             .into_iter()
     }
 
-    fn split(self, separator: T) -> Vec<Vec<T>>
+    fn split(self, separator: &T) -> Vec<Vec<T>>
     where
         T: PartialEq,
         T: Clone,
@@ -104,10 +104,10 @@ where
         let mut buffer = Vec::new();
 
         for x in self {
-            if x == separator{
+            if &x == separator {
                 result.push(buffer.clone());
                 buffer.clear();
-            }else{
+            } else {
                 buffer.push(x)
             }
         }
