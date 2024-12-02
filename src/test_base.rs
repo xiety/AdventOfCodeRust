@@ -13,7 +13,7 @@ pub mod test {
             .file_stem()
             .and_then(|s| s.to_str())
             .unwrap();
-        let filename = format!("data\\{code_filename_only}_{part}.txt");
+        let filename = format!("data\\{code_filename_only}\\{part}.txt");
         let actual = f(&filename);
         assert_eq!(actual, expected);
     }

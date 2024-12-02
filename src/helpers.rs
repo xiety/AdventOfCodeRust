@@ -2,9 +2,12 @@ use std::cmp::PartialEq;
 use std::cmp::PartialOrd;
 use std::collections::BTreeMap;
 use std::fmt::Debug;
+use std::fs;
 use std::str::FromStr;
 
 pub fn read_lines(filename: &str) -> Vec<String> {
+    assert!(fs::exists(filename).unwrap_or(false), "File does not exist: {filename}");
+
     std::fs::read_to_string(filename)
         .unwrap()
         .lines()
@@ -160,28 +163,6 @@ where
 
     fn pairs_every(self) -> impl Iterator<Item = (T, T)> {
         self.clone().zip(self.skip(1))
-    }
-}
-
-pub trait CapturesExt<'h> {
-    fn get_type<T: FromStr>(&self, name: &str) -> T
-    where
-        <T as FromStr>::Err: Debug;
-    fn get_str(&self, name: &str) -> &str;
-}
-
-impl<'h> CapturesExt<'h> for regex_lite::Captures<'h> {
-    fn get_type<T: FromStr>(&self, name: &str) -> T
-    where
-        <T as FromStr>::Err: Debug,
-    {
-        let v = self.get_str(name);
-        let a = v.parse::<T>();
-        a.unwrap()
-    }
-
-    fn get_str(&self, name: &str) -> &str {
-        self.name(name).unwrap().as_str()
     }
 }
 
